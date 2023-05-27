@@ -4,29 +4,42 @@ import Login from './Login';
 import Profile from './Profile';
 import Reservation from './Reservation';
 import Calendar from './Calendar';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 
-const App = () => {
+const AuthHandler = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setUser(user);
+    const unsubscribe = auth.onAuthStateChanged(userAuth => {
+      setUser(userAuth);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  if (!user) {
-    return <Login />;
-  }
+  useEffect(() => {
+    if(user) {
+      navigate('/profile');
+    } else {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
+  return null;
+};
+
+const App = () => {
   return (
-    <div>
-      <Profile user={user} />
-      <Reservation user={user} />
-      <Calendar user={user} />
-    </div>
+    <Router>
+      <AuthHandler />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/reservations" element={<Reservation />} />
+        <Route path="/calendar" element={<Calendar />} />
+      </Routes>
+    </Router>
   );
 };
 

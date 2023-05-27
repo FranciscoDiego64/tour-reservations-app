@@ -1,14 +1,15 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
 const Profile = ({ user }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
-      history.push('/login'); // Redirect to login page
+      await signOut(auth);
+      navigate('/login'); // Redirect to login page after logout
     } catch (error) {
       console.error(error);
     }

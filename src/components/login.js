@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
 const Login = () => {
@@ -7,13 +8,13 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      history.push('/profile'); // Redirect to profile page
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/profile'); // Redirect to profile page after login
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -36,3 +37,4 @@ const Login = () => {
 };
 
 export default Login;
+
