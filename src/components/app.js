@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import Login from './Login';
 import Profile from './Profile';
 import Reservation from './Reservation';
 import Calendar from './Calendar';
-import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import Register from './Register';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 const AuthHandler = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(userAuth => {
+    const unsubscribe = onAuthStateChanged(auth, userAuth => {
       setUser(userAuth);
+      if(userAuth) {
+        if (location.pathname !== "/profile") {
+          navigate('/profile');
+        }
+      } else {
+        if (location.pathname !== "/login" && location.pathname !== "/register") {
+          navigate('/login');
+        }
+      }
     });
 
     return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if(user) {
-      navigate('/profile');
-    } else {
-      navigate('/login');
-    }
-  }, [user, navigate]);
+  }, [navigate, location]);
 
   return null;
 };
@@ -38,10 +42,10 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/reservations" element={<Reservation />} />
         <Route path="/calendar" element={<Calendar />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
 };
 
 export default App;
-//f
