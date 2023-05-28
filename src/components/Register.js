@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase';
+import { createUserWithEmailAndPassword } from "firebase/auth"; 
+import { auth } from '../firebase'; 
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
@@ -12,8 +13,8 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await auth.createUserWithEmailAndPassword(email, password);
-      navigate('/profile'); // Redirect to profile page after registration
+      await createUserWithEmailAndPassword(auth, email, password); // modified this line
+      navigate('/profile'); 
     } catch (error) {
       setErrorMessage(error.message);
     }

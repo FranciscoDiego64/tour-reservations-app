@@ -84520,6 +84520,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
+var _auth = require("firebase/auth");
 var _firebase = require("../firebase");
 var _reactRouterDom = require("react-router-dom");
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
@@ -84556,9 +84557,10 @@ var Register = function Register() {
             e.preventDefault();
             _context.prev = 1;
             _context.next = 4;
-            return _firebase.auth.createUserWithEmailAndPassword(email, password);
+            return (0, _auth.createUserWithEmailAndPassword)(_firebase.auth, email, password);
           case 4:
-            navigate('/profile'); // Redirect to profile page after registration
+            // modified this line
+            navigate('/profile');
             _context.next = 10;
             break;
           case 7:
@@ -84598,7 +84600,7 @@ var Register = function Register() {
 };
 var _default = Register;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../firebase":"firebase.js","react-router-dom":"../node_modules/react-router-dom/dist/index.js"}],"components/App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","firebase/auth":"../node_modules/firebase/auth/dist/esm/index.esm.js","../firebase":"firebase.js","react-router-dom":"../node_modules/react-router-dom/dist/index.js"}],"components/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -84702,7 +84704,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64986" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51461" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
