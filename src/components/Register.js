@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword } from "firebase/auth"; 
-import { auth } from '../firebase'; 
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { TextField, Button, Typography, Container, Box } from '@mui/material';
+import { setDoc, doc } from 'firebase/firestore';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
@@ -14,8 +17,20 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      navigate('/profile'); 
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await updateProfile(user, { displayName });
+  
+      // Here we add a new document to the 'users' collection in Firestore.
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        displayName,
+        email,
+        createdAt: serverTimestamp()
+      }).then(() => {
+        navigate('/profile');
+      });
+      
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -36,7 +51,18 @@ const Register = () => {
         <Typography variant="h4" gutterBottom>
           Register
         </Typography>
-        {errorMessage && <p>{errorMessage}</p>}
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="displayName"
+          label="Display Name"
+          name="displayName"
+          autoFocus
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+        />
         <TextField
           variant="outlined"
           margin="normal"
@@ -46,9 +72,8 @@ const Register = () => {
           label="Email Address"
           name="email"
           autoComplete="email"
-          autoFocus
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextField
           variant="outlined"
@@ -61,7 +86,7 @@ const Register = () => {
           id="password"
           autoComplete="current-password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <Button
           type="submit"
