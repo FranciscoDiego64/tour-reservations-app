@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
-const Profile = ({ user }) => {
+const Profile = () => { // Remove user prop here
   const navigate = useNavigate();
+  const user = auth.currentUser;
 
   const handleLogout = async () => {
     try {
@@ -18,11 +19,10 @@ const Profile = ({ user }) => {
   return (
     <div>
       <h2>User Profile</h2>
-      <p>Email: {user.email}</p>
+      {user ? <p>Email: {user.email}</p> : <p>No user is signed in</p>}
       <button onClick={handleLogout}>Log out</button>
     </div>
   );
 };
 
 export default Profile;
-//f
